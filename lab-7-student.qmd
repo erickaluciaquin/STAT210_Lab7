@@ -74,8 +74,14 @@ Detective Wickham reaches out to you...
 **Step 1: Find the police report in `crime_scene_report`. Then used the information in the report to move on to the next data source based on the information learned.**
 
 ```{r}
+#| label: crime scene report in SQL City
 # Code for looking at the relevant crime scene report.
-
+sqlmurder_report <- crime_scene_report %>%
+  filter(date == "20180115",
+         type == "murder",
+         city == "SQL City",
+         )
+(sqlmurder_report)
 
 ```
 
