@@ -83,13 +83,42 @@ sqlmurder_report <- crime_scene_report %>%
          )
 (sqlmurder_report)
 
-```
 
+```
+Description:
+Security footage shows that there were 2 witnesses. The first witness lives at the last house on "Northwestern Dr". The second witness, named Annabel, lives somewhere on "Franklin Ave".
+
+Notes:
+First witness is identified as Morty Schapiro (14887), who lives on 4919 Northwestern Dr (the last house on the street). Schapiro describes on the interview that he heard the gun shot and saw the suspect ran out. Suspect is described wearing a 
 
 
 
 **Next Steps: Follow the evidence to the person responsible for the murder, building a report as you go.**
 There are accomplices, some knowingly and some unknowingly, but there is only one mastermind.
+```{r}
+#| label: file on witness two: Annabel Miller
+witness_two <- person %>%
+filter(name == "Annabel Miller",
+       address_street_name == "Franklin Ave")
+
+interview %>%
+  filter(person_id == "16371")
+
+(witness_two)
+```
+
+```{r}
+#| label: file on witness one: Morty Schapiro
+witness_one <- person %>%
+filter(address_street_name == "Northwestern Dr") %>%
+arrange(desc(address_number))
+
+interview %>%
+  filter(person_id == "14887")
+
+(witness_one)
+```
+
 
 
 Solve the murder mystery, showing **all of your work in this document**. Your
