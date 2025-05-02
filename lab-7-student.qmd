@@ -83,20 +83,34 @@ sqlmurder_report <- crime_scene_report %>%
          )
 (sqlmurder_report)
 
-
 ```
 Description:
 Security footage shows that there were 2 witnesses. The first witness lives at the last house on "Northwestern Dr". The second witness, named Annabel, lives somewhere on "Franklin Ave".
 
 Notes:
-First witness is identified as Morty Schapiro (14887), who lives on 4919 Northwestern Dr (the last house on the street). Schapiro describes on the interview that he heard the gun shot and saw the suspect ran out. Suspect is described wearing a 
+  First witness is identified as Morty Schapiro (14887), who lives on 4919 Northwestern Dr (the last house on the street). Mr. Schapiro describes on the interview that he heard the gun shot and saw the suspect ran out. Suspect is described wearing a "Get Fit Now" gym bag with a membership number starting with "48Z". Witness states that only gold members are allowed to have those. License plate begins with "H42W".
+    Second witness is identified as Annabel Miller (16371), who lives on 103 Franklin Ave. Ms. Miller describes on the interview that she saw the murder occur and recognizes the murderer from a gym session dating to last week on January 9, 2018.
+    After reviewing Get Fit Now records, there are two possible suspects that share "48Z" in there gold membership status: Joe Germuska (28819) and Jeremy Bowers (67318). Jeremy attended "Funky Grooves Tour" the day of the murder.
 
 
 
 **Next Steps: Follow the evidence to the person responsible for the murder, building a report as you go.**
 There are accomplices, some knowingly and some unknowingly, but there is only one mastermind.
 ```{r}
-#| label: file on witness two: Annabel Miller
+#| label: file on witness one
+witness_one <- person %>%
+filter(address_street_name == "Northwestern Dr") %>%
+arrange(desc(address_number)) # arranges address numbres in descending order
+
+interview %>%
+  filter(person_id == "14887")
+
+(witness_one)
+
+```
+
+```{r}
+#| label: file on witness two
 witness_two <- person %>%
 filter(name == "Annabel Miller",
        address_street_name == "Franklin Ave")
@@ -108,16 +122,40 @@ interview %>%
 ```
 
 ```{r}
-#| label: file on witness one: Morty Schapiro
-witness_one <- person %>%
-filter(address_street_name == "Northwestern Dr") %>%
-arrange(desc(address_number))
+#| label: suspect case file
 
-interview %>%
-  filter(person_id == "14887")
+suspect <- get_fit_now_check_in %>%
+  filter(check_in_date == "20180109" &
+  substr(membership_id, 1,3)  == "48Z") # extracts variables that include "48z in id
 
-(witness_one)
+get_fit_now_member %>%
+  filter(membership_status == "gold" &
+  substr(id, 1, 3) == "48Z"
+         )
+drivers_license %>%
+  filter(gender == "male" &
+  str_detect(plate_number, "H42W")) # detects the presence of "H42W" in a licence plate
+
+facebook_event_checkin %>%
+  filter(date == "20180115",
+         person_id == "28819" |
+         person_id == "67318")
 ```
+
+```{r}
+#| label: suspect licence identification
+ 
+licence_ids <- person %>%
+  filter(name == "Jeremy Bowers" |
+         name == "Joe Germuska")
+
+drivers_license %>%
+  filter( id == "173289" |
+          id == "423327")
+
+licence_ids
+```
+
 
 
 
@@ -136,5 +174,5 @@ tables manually. Functions from `stringr` and `lubridate` will also be useful.
 ::: callout-note
 ## And the final suspect is...
 
-*put the name of the person responsible for the murder here.*
+**Jeremy Bowers**
 :::
